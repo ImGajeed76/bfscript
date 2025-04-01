@@ -87,10 +87,45 @@ if __name__ == "__main__":
     # 1. Erstelle eine Beispiel-Grammatikdatei `grammar.lark` (wie in deiner Frage)
     # 2. Erstelle eine Beispiel-BrainfuckScript-Datei, z.B. `test.bfs`
     bfs_code = """
-#define MODULO 50
-#define REPEAT 5
-    
-size_t a = 5 * REPEAT + 2 - 1 + 30;
+// --- Pyramid Printer ---
+// Prints a pyramid of '*' characters using nested loops.
+// Avoids multiplication by incrementing the character count per row.
+
+size_t height = 7;
+
+size_t current_row = 1;         
+size_t chars_for_this_row = 1; 
+
+// Loop for each row
+while (current_row <= height) {
+
+    // --- Print leading spaces ---
+    // Number of spaces = height - current_row
+    size_t spaces_needed = height - current_row;
+    size_t spaces_printed = 0;
+
+    while (spaces_printed < spaces_needed) {
+        output(' ');
+        spaces_printed = spaces_printed + 1;
+    }
+
+    // --- Print the characters ('*') ---
+    size_t chars_printed = 0;
+    while (chars_printed < chars_for_this_row) {
+        output(42);
+        chars_printed = chars_printed + 1;
+    }
+
+    // --- Print a newline character ---
+    output(10);
+
+    // --- Prepare for the next row ---
+    current_row = current_row + 1;
+    // Add 2 characters for the next row (1 -> 3 -> 5 -> ...)
+    chars_for_this_row = chars_for_this_row + 2;
+}
+
+// Program finished
 """
     with open("test.bfs", "w", encoding="utf-8") as f:
         f.write(bfs_code)
