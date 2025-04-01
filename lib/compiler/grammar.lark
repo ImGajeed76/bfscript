@@ -1,11 +1,10 @@
-// --- Lark Grammar for BrainfuckScript (Allowing Top-Level Statements - Fixed Ambiguity) ---
+// --- Lark Grammar for BrainfuckScript ---
 
 // --- Start Rule ---
 // A program consists of zero or more top-level items
 start: top_level_item*
 
 // --- Top-Level Items ---
-// Removed global_declaration, as statement now covers declarations too.
 ?top_level_item: include_directive
                | define_directive
                | function_definition
@@ -35,6 +34,7 @@ statement: variable_declaration // size_t var; (ends in ;)
          | assignment           // lvalue = expr; (ends in ;)
          | expression ";"       // func(); stack.pop(); 5; (add ; for expression statements)
          | push_statement       // stack.push(val); (ends in ;)
+         | output_statement     // output(expr); (ends in ;)
          | if_statement         // No trailing ; here
          | while_statement      // No trailing ; here
          | return_statement     // return [expr]; (ends in ;)
@@ -55,6 +55,7 @@ return_statement: "return" [expression] ";" // Ends in ;
 // --- Assignments and Stack Operations ---
 assignment: lvalue "=" expression ";" // Ends in ;
 push_statement: DECLARED_NAME "." "push" "(" expression ")" ";" // Ends in ;
+output_statement: "output" "(" expression ")" ";" // Output the value as ascii
 
 ?lvalue: DECLARED_NAME
 
@@ -77,6 +78,7 @@ push_statement: DECLARED_NAME "." "push" "(" expression ")" ";" // Ends in ;
      | function_call         // func(a, b)
      | stack_peek            // myStack.peek()
      | stack_pop             // myStack.pop()
+     | input_call            // input()
      | "(" expression ")"    // (a + b)
 
 // --- Specific Expression Components (No Semicolons Here) ---
@@ -84,6 +86,7 @@ stack_peek: DECLARED_NAME "." "peek" "(" ")"
 stack_pop:  DECLARED_NAME "." "pop" "(" ")"
 function_call: DECLARED_NAME "(" [argument_list] ")"
 argument_list: expression ("," expression)*
+input_call: "input" "(" ")" // Input as ascii
 
 // --- Terminals (Lexer Definitions) ---
 NEW_NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
@@ -118,4 +121,3 @@ C_COMMENT: /\/\/[^\n]*/ | /\/\*[\s\S]*?\*\//
 %ignore WS_INLINE
 %ignore NEWLINE
 %ignore C_COMMENT
-

@@ -81,7 +81,8 @@ class BrainfuckScriptTransformer(Transformer):
 
         # Combine IRs - simple list for now
         # A real compiler might structure this into data/code sections
-        return {'op': 'program', 'globals_ir': processed_items, 'functions': self.functions, 'code': "".join(final_code)}
+        return {'op': 'program', 'globals_ir': processed_items, 'functions': self.functions,
+                'code': "".join(final_code)}
 
     def global_declaration(self, items):
         # Processed by variable_declaration or stack_declaration
@@ -242,24 +243,29 @@ class BrainfuckScriptTransformer(Transformer):
         elif op == '>=':
             temp3 = self.memory_manager.get_temp_cell()
             temp4 = self.memory_manager.get_temp_cell()
-            code += self.brainfuck_assembler.greater_than_or_equal_to_unsigned(left_r, right_r, result_r, temp1, temp2, temp3, temp4)
+            code += self.brainfuck_assembler.greater_than_or_equal_to_unsigned(left_r, right_r, result_r, temp1, temp2,
+                                                                               temp3, temp4)
             self.memory_manager.release_temp_cell(temp4)
             self.memory_manager.release_temp_cell(temp3)
         elif op == '<=':
             temp3 = self.memory_manager.get_temp_cell()
             temp4 = self.memory_manager.get_temp_cell()
-            code += self.brainfuck_assembler.less_than_or_equal_to_unsigned(left_r, right_r, result_r, temp1, temp2, temp3, temp4)
+            code += self.brainfuck_assembler.less_than_or_equal_to_unsigned(left_r, right_r, result_r, temp1, temp2,
+                                                                            temp3, temp4)
             self.memory_manager.release_temp_cell(temp4)
             self.memory_manager.release_temp_cell(temp3)
         elif op == '>':
             temp3 = self.memory_manager.get_temp_cell()
             temp4 = self.memory_manager.get_temp_cell()
-            code += self.brainfuck_assembler.greater_than_unsigned(left_r, right_r, result_r, temp1, temp2, temp3, temp4)
+            code += self.brainfuck_assembler.greater_than_unsigned(left_r, right_r, result_r, temp1, temp2, temp3,
+                                                                   temp4)
             self.memory_manager.release_temp_cell(temp4)
             self.memory_manager.release_temp_cell(temp3)
         elif op == '<':
             temp3 = self.memory_manager.get_temp_cell()
-            code += self.brainfuck_assembler.less_than_unsigned(left_r, right_r, result_r, temp1, temp2, temp3)
+            temp4 = self.memory_manager.get_temp_cell()
+            code += self.brainfuck_assembler.less_than_unsigned(left_r, right_r, result_r, temp1, temp2, temp3, temp4)
+            self.memory_manager.release_temp_cell(temp4)
             self.memory_manager.release_temp_cell(temp3)
         else:
             self.memory_manager.release_temp_cell(temp2)
@@ -275,7 +281,7 @@ class BrainfuckScriptTransformer(Transformer):
         left_ir = items[0]
         for i in range(1, len(items), 2):
             op = str(items[i])
-            right_ir = items[i+1]
+            right_ir = items[i + 1]
 
             # Fold if both sides are constants
             if left_ir['op'] == 'const' and right_ir['op'] == 'const':
@@ -506,6 +512,29 @@ class BrainfuckScriptTransformer(Transformer):
 
     def stack_pop(self, items):
         raise NotImplementedError("Stack pop expressions are not yet supported.")
+
+    def input_call(self, items):
+        def code_func(result_cell) -> List[str]:
+            c = []
+            c += self.brainfuck_assembler.move_to_cell(result_cell)
+            c += self.brainfuck_assembler.input()
+            return c
+
+        return {'op': 'input', 'code_func': code_func}
+
+    @v_args(inline=True)
+    def output_statement(self, expression_ir):
+
+        def code_func() -> List[str]:
+            c = []
+            temp = self.memory_manager.get_temp_cell()
+            c += expression_ir['code_func'](temp)
+            c += self.brainfuck_assembler.move_to_cell(temp)
+            c += self.brainfuck_assembler.output()
+            self.memory_manager.release_temp_cell(temp)
+            return c
+
+        return {'op': 'output', 'code_func': code_func}
 
     # --- Terminals that need specific handling ---
     def STRING(self, s):
