@@ -439,7 +439,7 @@ class BrainfuckScriptTransformer(Transformer):
 
         return {'op': 'const', 'value': int(token), 'code_func': code_func}
 
-    def CHARACTER(self, token):
+    def CHAR_LITERAL(self, token):
         # token is 'c', we need ASCII value
         token_value = str(token)
         if len(token_value) == 3:
