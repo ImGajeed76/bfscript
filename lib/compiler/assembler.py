@@ -353,13 +353,13 @@ class BFAssembler:
         return code
 
     def less_than_unsigned(self, src1_index: int, src2_index: int, dest_index: int, temp_index_1: int = 0, temp_index_2: int = 1,
-                           temp_index_3: int = 2) -> List[str]:
-        if not is_different_cells([src1_index, src2_index, dest_index, temp_index_1, temp_index_2, temp_index_3]):
+                           temp_index_3: int = 2, temp_index_4: int = 3) -> List[str]:
+        if not is_different_cells([src1_index, src2_index, dest_index, temp_index_1, temp_index_2, temp_index_3, temp_index_4]):
             raise ValueError("less_than called with non-distinct cell indices")
 
         # Compares src1 and src2, stores 1 in dest if src1 < src2, 0 otherwise
         # This uses the greater_than function since src1 < src2 is equivalent to src2 > src1
-        return self.greater_than_unsigned(src2_index, src1_index, dest_index, temp_index_1, temp_index_2, temp_index_3)
+        return self.greater_than_unsigned(src2_index, src1_index, dest_index, temp_index_1, temp_index_2, temp_index_3, temp_index_4)
 
     def logical_not(self, src_index: int, dest_index: int, temp_index_1: int = 0, temp_index_2: int = 1) -> List[str]:
         if not is_different_cells([src_index, dest_index, temp_index_1, temp_index_2]):
