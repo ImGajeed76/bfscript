@@ -1,0 +1,5 @@
+
+#define MODULO 50
+#define REPEAT 5
+    
+size_t a = 5 * REPEAT + 2 - 1 + 30;

@@ -1,0 +1,121 @@
+// --- Lark Grammar for BrainfuckScript (Allowing Top-Level Statements - Fixed Ambiguity) ---
+
+// --- Start Rule ---
+// A program consists of zero or more top-level items
+start: top_level_item*
+
+// --- Top-Level Items ---
+// Removed global_declaration, as statement now covers declarations too.
+?top_level_item: include_directive
+               | define_directive
+               | function_definition
+               | statement          // Allow any statement at top level
+
+// --- Preprocessor Directives ---
+include_directive: "#include" STRING
+define_directive:  "#define" DECLARED_NAME expression
+
+// --- Top-Level Definitions ---
+// global_declaration rule removed
+function_definition: type_specifier NEW_NAME "(" [parameter_list] ")" block
+
+// --- Types ---
+type_specifier: "size_t" | "void" | "stack"
+
+// --- Function Related ---
+parameter_list: parameter ("," parameter)*
+parameter: ("size_t" | "stack") DECLARED_NAME
+
+// --- Code Blocks and Statements ---
+block: "{" statement* "}"
+
+// Statements can now appear at the top level or inside blocks
+statement: variable_declaration // size_t var; (ends in ;)
+         | stack_declaration    // stack s[10]; (ends in ;)
+         | assignment           // lvalue = expr; (ends in ;)
+         | expression ";"       // func(); stack.pop(); 5; (add ; for expression statements)
+         | push_statement       // stack.push(val); (ends in ;)
+         | if_statement         // No trailing ; here
+         | while_statement      // No trailing ; here
+         | return_statement     // return [expr]; (ends in ;)
+         | block                // No trailing ; here
+
+// --- Variable and Stack Declarations (Used by statement) ---
+variable_declaration: "size_t" NEW_NAME ("=" expression)? ";" // Ends in ;
+stack_declaration: "stack" NEW_NAME "[" expression "]" ";"    // Ends in ;
+
+// --- Control Flow ---
+if_statement: "if" "(" expression ")" statement [else_clause]
+?else_clause: "else" statement
+
+while_statement: "while" "(" expression ")" statement
+
+return_statement: "return" [expression] ";" // Ends in ;
+
+// --- Assignments and Stack Operations ---
+assignment: lvalue "=" expression ";" // Ends in ;
+push_statement: DECLARED_NAME "." "push" "(" expression ")" ";" // Ends in ;
+
+?lvalue: DECLARED_NAME
+
+// --- Expressions (Operator Precedence Matters!) ---
+?expression: comparison
+
+?comparison: arithmetic ( ( EQ | NE | GE | LE | GT | LT ) arithmetic )*
+
+?arithmetic: term ( ( PLUS | MINUS ) term )*
+
+?term: factor ( ( TIMES | DIVIDE ) factor )*
+
+?factor: (POSITIVE | NEGATIVE) factor // Unary operators
+     | atom
+
+// Atoms do NOT end in semicolons when used as expressions
+?atom: NUMBER                // 123
+     | "'" CHARACTER "'"     // 'A'
+     | DECLARED_NAME         // Variable name
+     | function_call         // func(a, b)
+     | stack_peek            // myStack.peek()
+     | stack_pop             // myStack.pop()
+     | "(" expression ")"    // (a + b)
+
+// --- Specific Expression Components (No Semicolons Here) ---
+stack_peek: DECLARED_NAME "." "peek" "(" ")"
+stack_pop:  DECLARED_NAME "." "pop" "(" ")"
+function_call: DECLARED_NAME "(" [argument_list] ")"
+argument_list: expression ("," expression)*
+
+// --- Terminals (Lexer Definitions) ---
+NEW_NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+DECLARED_NAME: /[a-zA-Z_][a-zA-Z0-9_]*/ // Reuse for declared names
+NUMBER: /\d+/
+CHARACTER: /[^'\\]/ // Simple character
+STRING: /"[^"]*"/    // Simple string for #include
+
+// --- Comparison Operators ---
+EQ: "=="
+NE: "!="
+GE: ">="
+LE: "<="
+GT: ">"
+LT: "<"
+
+// --- Arithmetic Operators ---
+PLUS: "+"
+MINUS: "-"
+TIMES: "*"
+DIVIDE: "/"
+POSITIVE: "+"
+NEGATIVE: "-"
+
+// Keywords are implicitly defined by using them in quotes
+
+// --- Comments and Whitespace ---
+C_COMMENT: /\/\/[^\n]*/ | /\/\*[\s\S]*?\*\//
+%import common.WS_INLINE
+%import common.NEWLINE
+
+%ignore WS_INLINE
+%ignore NEWLINE
+%ignore C_COMMENT
+
