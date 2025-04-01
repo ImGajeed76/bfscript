@@ -14,13 +14,13 @@ def is_different_cells(cells: List[int]) -> bool:
 
 
 class BFAssembler:
-    def __init__(self):
+    def __init__(self, temp_cell_pool_size: int = 20):
         self.generated_code = []
         self.symbol_table = {}
         self.current_pointer_pos = 0
         # Reserve, cells for temps initially
         # Temp cell usage must be finished before function returns
-        self.temp_cell_pool = range(20)
+        self.temp_cell_pool = range(temp_cell_pool_size)
         self.next_available_cell = len(self.temp_cell_pool)  # Start allocating variables from here
 
     def plus(self, count=1) -> List[str]:

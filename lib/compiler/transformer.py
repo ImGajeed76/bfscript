@@ -442,11 +442,17 @@ class BrainfuckScriptTransformer(Transformer):
     def CHAR_LITERAL(self, token):
         # token is 'c', we need ASCII value
         token_value = str(token)
-        if len(token_value) == 3:
+        if len(token_value) == 2 and token_value[0] == "\\":
+            # convert '\n' to actual newline character
+            token_value = token_value.encode('latin-1').decode('unicode_escape')
+        elif len(token_value) == 3:
             token_value = token_value[1]  # Extract the character
-        if len(token_value) != 1:
+        elif len(token_value) == 4 and token_value[1] == "\\":
+            token_value = token_value[1:-1].encode('latin-1').decode('unicode_escape')
+        elif len(token_value) != 1:
             raise ValueError(f"Invalid character literal: '{token_value}'")
 
+        print(token_value)
         value = ord(token_value)
 
         def code_func(result_cell) -> List[str]:

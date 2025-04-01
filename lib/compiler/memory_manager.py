@@ -50,8 +50,8 @@ class MemoryManager:
             # require more temp cells than allocated.
             raise MemoryError("Out of temporary cells!")
         cell = self.temp_cell_pool.pop(0)  # Get the first available
-        if cell > self.max_temp:
-            self.max_temp = cell
+        if cell+1 > self.max_temp:
+            self.max_temp = cell+1 # Use +1 because cell is 0-based
         print(f"MemoryManager: Temp cell {cell} allocated.")
         return cell
 
