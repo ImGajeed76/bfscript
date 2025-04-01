@@ -24,7 +24,7 @@ class BFInterpreter:
             self,
             code,
             memory_size=30000,  # Set to None for 'infinite' memory
-            cell_bits=8,
+            cell_bits=32,
             initial_input="",
             max_execution_time=5.0,  # Seconds
     ):
