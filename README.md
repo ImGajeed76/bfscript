@@ -4,6 +4,8 @@
 
 **Compile a C-like language directly into Brainfuck!**
 
+🌐 **Try it online:** https://bfscript.streamlit.app/
+
 BrainfuckScript is a compiler written in Python that translates a more familiar, C-inspired syntax into notoriously
 minimalistic Brainfuck code. It aims to make developing complex Brainfuck programs feasible by providing higher-level
 abstractions like variables, loops, and conditional statements.
@@ -69,6 +71,10 @@ this gap!
    ```
 
 ## 🛠️ Usage
+
+### Web Version
+
+You can also use BrainfuckScript directly in your browser at **https://bfscript.streamlit.app/**
 
 ### Compiling BrainfuckScript (`.bfs`) to Brainfuck (`.bf`)
 
