@@ -65,7 +65,7 @@ this gap!
    ```
 3. **Install dependencies using Poetry:**
    ```bash
-   poetry install --no-root
+   poetry install
    ```
 
 ## 🛠️ Usage
