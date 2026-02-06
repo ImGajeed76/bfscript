@@ -162,7 +162,8 @@ while (current_row <= height) {
     }
 
     // --- Print a newline character ---
-    output('\n');
+    output('
+');
 
     // --- Prepare for the next row ---
     current_row = current_row + 1;
@@ -200,3 +201,15 @@ This project is licensed under the **GNU General Public License v3.0**. See the 
 ---
 
 Happy Brainfucking (the easier way)! 🎉
+
+---
+
+## Author
+
+**Oliver Seifert** - Software Engineer & Electronics Technician
+
+- Portfolio: [oseifert.ch](https://oseifert.ch)
+- GitHub: [@ImGajeed76](https://github.com/ImGajeed76)
+- Blog: [oseifert.ch/blog](https://oseifert.ch/blog)
+
+See my other projects at [oseifert.ch/projects](https://oseifert.ch/projects)
