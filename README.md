@@ -4,7 +4,7 @@
 
 **Compile a C-like language directly into Brainfuck!**
 
-🌐 **Try it online:** https://bfscript.streamlit.app/
+🌐 **Try it online:** https://bfscript.streamlit.app/ | 📝 **[Read how it was built](https://oseifert.ch/blog/building-bfscript)**
 
 BrainfuckScript is a compiler written in Python that translates a more familiar, C-inspired syntax into notoriously
 minimalistic Brainfuck code. It aims to make developing complex Brainfuck programs feasible by providing higher-level
@@ -203,13 +203,4 @@ This project is licensed under the **GNU General Public License v3.0**. See the 
 Happy Brainfucking (the easier way)! 🎉
 
 ---
-
-## Author
-
-**Oliver Seifert** - Software Engineer & Electronics Technician
-
-- Portfolio: [oseifert.ch](https://oseifert.ch)
-- GitHub: [@ImGajeed76](https://github.com/ImGajeed76)
-- Blog: [oseifert.ch/blog](https://oseifert.ch/blog)
-
-See my other projects at [oseifert.ch/projects](https://oseifert.ch/projects)
+Built with ❤️ by [Oliver Seifert](https://oseifert.ch)
